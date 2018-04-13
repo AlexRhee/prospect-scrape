@@ -10,7 +10,9 @@ var axios = require("axios");
 var cheerio = require("cheerio");
 
 // Require all models
-var db = require("./models");
+var datab = require("./models");
+
+var db = mongoose.connection;
 
 var PORT = process.env.PORT || 3000;
 
@@ -27,6 +29,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static("public"));
 
 var MONGODB_URI = process.env.MONGODB_URI || "mongodb://localhost/mongoHeadlines";
+mongoose.Promise = Promise;
 
 // Connect to the Mongo DB
 mongoose.connect(MONGODB_URI);
@@ -56,7 +59,7 @@ app.get("/scrape", function (req, res) {
       console.log(result)
 
       // Create a new Article using the `result` object built from scraping
-      db.Article.create(result)
+      datab.Article.create(result)
         .then(function (dbArticle) {
           // View the added result in the console
           console.log(dbArticle);
@@ -75,7 +78,7 @@ app.get("/scrape", function (req, res) {
 // Route for getting all Articles from the db
 app.get("/articles", function (req, res) {
   // Grab every document in the Articles collection
-  db.Article.find({})
+  datab.Article.find({})
     .then(function (dbArticle) {
       // If we were able to successfully find Articles, send them back to the client
       res.json(dbArticle);
@@ -89,7 +92,7 @@ app.get("/articles", function (req, res) {
 // Route for grabbing a specific Article by id, populate it with it's note
 app.get("/articles/:id", function (req, res) {
   // Using the id passed in the id parameter, prepare a query that finds the matching one in our db...
-  db.Article.findOne({ _id: req.params.id })
+  datab.Article.findOne({ _id: req.params.id })
     // ..and populate all of the notes associated with it
     .populate("note")
     .then(function (dbArticle) {
@@ -105,12 +108,12 @@ app.get("/articles/:id", function (req, res) {
 // Route for saving/updating an Article's associated Note
 app.post("/articles/:id", function (req, res) {
   // Create a new note and pass the req.body to the entry
-  db.Note.create(req.body)
+  datab.Note.create(req.body)
     .then(function (dbNote) {
       // If a Note was created successfully, find one Article with an `_id` equal to `req.params.id`. Update the Article to be associated with the new Note
       // { new: true } tells the query that we want it to return the updated User -- it returns the original by default
       // Since our mongoose query returns a promise, we can chain another `.then` which receives the result of the query
-      return db.Article.findOneAndUpdate({ _id: req.params.id }, { note: dbNote._id }, { new: true });
+      return datab.Article.findOneAndUpdate({ _id: req.params.id }, { note: dbNote._id }, { new: true });
     })
     .then(function (dbArticle) {
       // If we were able to successfully update an Article, send it back to the client
@@ -123,14 +126,14 @@ app.post("/articles/:id", function (req, res) {
 });
 
 app.delete("/articles/:id", function (req, res) {
-  db.Note.remove({ _id: req.params.id }).then(function (dbData) {
+  datab.Note.remove({ _id: req.params.id }).then(function (dbData) {
     res.json(dbData)
   })
 })
 
 app.put("/save/:id", function (req, res) {
   // Grab every document in the Articles collection
-  db.Article.findByIdAndUpdate({_id: req.params.id}, {$set:{saved: true}})
+  datab.Article.findByIdAndUpdate({_id: req.params.id}, {$set:{saved: true}})
     .then(function (dbArticle) {
       // If we were able to successfully find Articles, send them back to the client
       res.json(dbArticle);
@@ -143,7 +146,7 @@ app.put("/save/:id", function (req, res) {
 
 app.get("/saved", function (req, res) {
   // Grab every document in the Articles collection
-  db.Article.find({saved: true})
+  datab.Article.find({saved: true})
     .then(function (dbArticle) {
       console.log(dbArticle)
       res.json(dbArticle);
