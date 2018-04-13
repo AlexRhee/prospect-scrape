@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en-us">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Scraping With Mongoose</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0-beta/css/materialize.min.css">
+
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+    <link href="https://fonts.googleapis.com/css?family=Oleo+Script" rel="stylesheet">
+    <link rel="stylesheet" href="assets/css/style.css">
+</head>
+
+<body>
+    <nav>
+        <div class="nav-wrapper">
+            <a href="#" class="brand-logo">Wall Street Journal Article Scraper</a>
+            <ul id="nav-mobile" class="right hide-on-med-and-down">
+                <li>
+                    <a href="/">Home</a>
+                </li>
+                <li>
+                    <a href="/saved">Saved Articles</a>
+                </li>
+                <li>
+                    <button id="scraper" class="btn">Scrape</button>
+                </li>
+            </ul>
+        </div>
+    </nav>
+
+    <div id="wrapper">
+        <h1>WSJ News Scraper</h1>
+        <h2>
+            <i>Click the button to show saved articles <button id="show" class="btn">Click Here</button></i>
+        </h2>
+        <div id="modal1" class="modal">
+            <div class="modal-content">
+                <div id="notes">
+                </div>
+            </div>
+        </div>
+        <div id="articles"></div>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0-beta/js/materialize.min.js"></script>
+        <script src="app.js"></script>
+        <script> 
+            var elem = document.querySelector('.modal1');
+            var instance = M.Modal.init(elem);
+
+            $(document).ready(function () {
+                $('#modal1').modal();
+            });</script>
+</body>
+
+</html>
