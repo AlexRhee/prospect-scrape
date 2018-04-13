@@ -155,7 +155,11 @@ app.get("/saved", function (req, res) {
 });
 
 // Start the server
-app.listen(PORT, function () {
+// app.listen(PORT, function () {
+//   console.log("App running on port " + PORT + "!");
+// });
+
+server.listen(PORT, function () {
   console.log("App running on port " + PORT + "!");
 });
 
